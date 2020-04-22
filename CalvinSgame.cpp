@@ -26,7 +26,7 @@ using namespace __gnu_pbds;
 #define          endl '\n'
 #define          sc second
 #define          pb push_back
-#define          N (int)2e5+5
+#define          N (int)2e6+5
 #define          PI acos(-1.0)
 #define          int long long 
 #define          vi vector<int>
@@ -65,35 +65,47 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] , dpf[N] , dpb[N]; // dpf to make forward moves
+							// dpb to make backward moves
 
 void go()
 {
-	cin >> n;
+	cin >> n >> k;
+	fo(i,1,n+1) cin >> a[i];
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	dpf[k] = 0;
+	dpf[k+1] = a[k+1];
 
-	fo(i,2,n+1) 
+	fo(i,k+2,n+1)
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
-
-		dp[i][2] = dp[i][0] + dp[i][1];
+		if( i - k > 2 )
+		{
+			dpf[i] = max( dpf[i-1] + a[i] , dpf[i-2] + a[i] );
+		}
+		else dpf[i] = max({ a[i] , dpf[i-1] + a[i] , dpf[i-2] + a[i] });
 	}
 
-	cout << dp[n][2] << endl;
+	dpb[n] = dpf[n];
+	dpb[n-1] = max( dpb[n] + a[n-1] , dpf[n-1] );
 
+	rfo(i,n-2,k)
+	{
+		dpb[i] = max({ dpf[i] , dpb[i+1] + a[i] , dpb[i+2] + a[i] });
+	}
 
+	rfo(i,k-1,1)
+	{
+		dpb[i] = max( dpb[i+1] + a[i] , dpb[i+2] + a[i] );
+	}
+
+	cout << dpb[1] << endl;
 }
 
 int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 

@@ -62,38 +62,32 @@ void __f (const char* names, Arg1&& arg1, Args&&... args)
 const int inf = 0x3f3f3f3f;
 const int INF = 0x3f3f3f3f3f3f3f3f;
 
-int n,m,k,q;
-string s;
-vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int n,m,k,q,x,y,z;
+int dp[N]; // minimum cost to reach ith cell
 
 void go()
 {
-	cin >> n;
+	cin >> n >> x >> y >> z;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	dp[1] = 0;
 
-	fo(i,2,n+1) 
+	for( int i = 2; i <= n ; i++)
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		int aa = y + dp[i-1]; // +1 operation
+		int bb = ( (i&1) ? INF : dp[i/2] + x ); // x2 operation
+		int cc = ( !(i&1) ? INF : dp[(i + 1)/2] + x + z ); // -1 operation 
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+		dp[i] = min( { aa , bb , cc} );
 	}
 
-	cout << dp[n][2] << endl;
-
-
+	cout << dp[n] << endl;
 }
 
 int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 

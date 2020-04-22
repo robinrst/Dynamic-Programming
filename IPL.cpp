@@ -26,7 +26,7 @@ using namespace __gnu_pbds;
 #define          endl '\n'
 #define          sc second
 #define          pb push_back
-#define          N (int)2e5+5
+#define          N (int)2e6+5
 #define          PI acos(-1.0)
 #define          int long long 
 #define          vi vector<int>
@@ -65,35 +65,50 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] , dp[N]; // dp[i] maximum sum till ith 
 
 void go()
 {
 	cin >> n;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	fo(i,1,n+1) cin >> a[i];
 
-	fo(i,2,n+1) 
+	if( n < 3 )
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		int xx = 0;
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+		fo(i,1,n+1) xx += a[i];
+		cout << xx << endl;
+		return;
+	}
+	if( n == 3 ) 
+	{
+		sort( a, a + n);
+		cout << a[3] + max( a[1] , a[2] ) << endl;
+		return;
 	}
 
-	cout << dp[n][2] << endl;
+	dp[1] = a[1];
+	dp[2] = a[2] + a[1];
+	dp[3] = a[3] + max( a[1] , a[2] );
 
+	int ans = max({ dp[1] , dp[2] , dp[3] }); 
 
+	fo(i,4,n+1)
+	{
+		dp[i] = max({ dp[i-1] , a[i] + dp[i-2] , a[i] + a[i-1] +  dp[i-3] });
+		// sum can be at i-1 , or if we skip i-1 , then we acn take i-2 max, and if we skip i-2 , we cam take previous index sum too
+		ans = max( ans , dp[i] );
+	}
+
+	cout << ans  << endl;
 }
 
 int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 

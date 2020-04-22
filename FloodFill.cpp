@@ -26,7 +26,7 @@ using namespace __gnu_pbds;
 #define          endl '\n'
 #define          sc second
 #define          pb push_back
-#define          N (int)2e5+5
+#define          N (int)5e3+5
 #define          PI acos(-1.0)
 #define          int long long 
 #define          vi vector<int>
@@ -65,26 +65,35 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] , dp[N][N]; // minimum changes to make segment [l,r] of same color
 
 void go()
 {
 	cin >> n;
+	fo(i,0,n) cin >> a[i];
+	n = unique( a, a+ n) - a;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	memset( dp , inf , sizeof dp);
 
-	fo(i,2,n+1) 
+	fo(i,0,n) dp[i][i] = 0;
+
+	for( int gap = 1; gap < n; gap++)
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		for( int i = 0; i+gap < n; i++)
+		{
+			int j = i + gap;
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+			if( j - i > 1 )
+			{
+				if( a[i] == a[j] ) dp[i][j] = 1 + dp[i+1][j-1];
+				else dp[i][j] = 1 + min( dp[i][j-1] , dp[i+1][j] );
+			}	
+			else dp[i][j] = 1;
+		}
 	}
 
-	cout << dp[n][2] << endl;
+	cout << dp[0][n-1] << endl;
+
 
 
 }
@@ -93,8 +102,7 @@ int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 
- 

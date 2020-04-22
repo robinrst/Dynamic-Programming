@@ -26,9 +26,9 @@ using namespace __gnu_pbds;
 #define          endl '\n'
 #define          sc second
 #define          pb push_back
-#define          N (int)2e5+5
+#define          N (int)5e3+5
 #define          PI acos(-1.0)
-#define          int long long 
+// #define          int long long 
 #define          vi vector<int>
 #define          mod 1000000007
 #define          ld long double
@@ -60,31 +60,31 @@ void __f (const char* names, Arg1&& arg1, Args&&... args)
 }
 
 const int inf = 0x3f3f3f3f;
-const int INF = 0x3f3f3f3f3f3f3f3f;
+// const int INF = 0x3f3f3f3f3f3f3f3f;
 
 int n,m,k,q;
-string s;
-vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] , dp[N][N][2]; // minimum changes to make [l,r] as color 0 or color 1
 
 void go()
 {
 	cin >> n;
+	fo(i,0,n) cin >> a[i];
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	n = unique( a,  a+ n)  - a;
 
-	fo(i,2,n+1) 
+	for( int l = n- 1; ~l; l--)
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
-
-		dp[i][2] = dp[i][0] + dp[i][1];
+		for( int r = l+1; r < n; r++)
+		{
+			dp[l][r][0] = min( dp[l+1][r][0] + ( a[l] != a[l+1] ) , dp[l+1][r][1] + ( a[l] != a[r] ) ); 
+			dp[l][r][1] = min( dp[l][r-1][1] + ( a[r] != a[r-1] ) , dp[l][r-1][0] + ( a[l] != a[r] ) );
+		}
 	}
 
-	cout << dp[n][2] << endl;
+	int ans = min( dp[0][n-1][0] , dp[0][n-1][1] );
+
+	cout << ans << endl;
+
 
 
 }
@@ -93,8 +93,7 @@ int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 
- 

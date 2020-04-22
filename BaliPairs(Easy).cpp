@@ -65,28 +65,45 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+pii a[N] , dp[N][3] , dp1[N][3];
+
+
+int FastExpo(int x, int n )
+{
+	int ans = 1;
+	while(n)
+	{
+		if( n&1 ) ans = ( ans%mod * x%mod )%mod;
+		x = ( x%mod * x%mod )%mod;
+		n >>= 1;
+	}
+	return ans;
+}
 
 void go()
 {
 	cin >> n;
+	int odd = 0 , even = 0 , both = 0;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
-
-	fo(i,2,n+1) 
+	fo(i,1,n+1) 
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		int x , y;
+		cin >> x >> y;
+		
+		x &= 1; // odd
+		y &= 1; // evevn
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+		if( x  and y ) odd++;
+		else if( !x and !y ) even++;
+		else both++;
 	}
+	int ans = 0;
+	
+	if( !both and !(odd&1) ) ans = 0;
+	else if( !both and (odd&1) ) ans = FastExpo(2 , n)%mod;
+	else ans = FastExpo(2 , n-1)%mod;
 
-	cout << dp[n][2] << endl;
-
-
+	cout << ans  << endl;
 }
 
 int32_t main()

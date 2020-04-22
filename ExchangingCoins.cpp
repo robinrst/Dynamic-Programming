@@ -64,28 +64,23 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 
 int n,m,k,q;
 string s;
-vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+mii dp; // use map because we don't need all states
+
+int makeAns(int n )
+{
+	if( n <= 6 ) return dp[n] = n;
+
+	int& ans = dp[n];
+	if( ans ) return ans;
+
+	return ans = max({ n , makeAns(n/2) + makeAns(n/3) + makeAns(n/4) } );
+}
 
 void go()
 {
 	cin >> n;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
-
-	fo(i,2,n+1) 
-	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
-
-		dp[i][2] = dp[i][0] + dp[i][1];
-	}
-
-	cout << dp[n][2] << endl;
-
+	cout << makeAns(n) << endl;
 
 }
 
@@ -93,8 +88,5 @@ int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
-	test(t) go();
+	go();
 }
-
- 

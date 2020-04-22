@@ -26,7 +26,7 @@ using namespace __gnu_pbds;
 #define          endl '\n'
 #define          sc second
 #define          pb push_back
-#define          N (int)2e5+5
+#define          N (int)2e6+5
 #define          PI acos(-1.0)
 #define          int long long 
 #define          vi vector<int>
@@ -65,35 +65,31 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] , l[N] , r[N] , dp[N]; // l[i] -> left maximum till i , r[i] -> right maximum till i
+								// dp[i] -> water trapped by ith idex
 
 void go()
 {
 	cin >> n;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	fo(i,1,n+1) cin >> a[i];
 
-	fo(i,2,n+1) 
+	fo(i,1,n+1)
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
-
-		dp[i][2] = dp[i][0] + dp[i][1];
+		l[i] = max( l[i-1] , a[i] );
+		r[n-i+1] = max( r[n-i + 1 + 1] , a[n-i + 1] );
 	}
 
-	cout << dp[n][2] << endl;
+	fo(i,1,n+1) dp[i] = dp[i-1] + max( 0LL , min( l[i] , r[i] ) - a[i] );
 
-
+	cout << dp[n] << endl;
 }
 
 int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 

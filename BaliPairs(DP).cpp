@@ -65,28 +65,47 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+pii a[N];
+int dp[N][2];  // 1 -> ways to make odd sum till ith index
+			  // 0 -> ways to make even sum till ith index
 
 void go()
 {
 	cin >> n;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	int ans = 0;
 
-	fo(i,2,n+1) 
+	memset( dp , 0 , sizeof dp );
+	
+	dp[0][1] = 0; // base case for odd sum 
+	dp[0][0] = 1; // base case for even sum 
+
+	fo(i,1,n+1)
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		int x , y;
+		cin >> x >> y;
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+		x &= 1;
+		y &= 1;
+
+		if( x and y ) // both odd
+		{
+			dp[i][1] = ( dp[i-1][0] * 2 )%mod; // to make odd sum we need total ways to make even sum since ( odd + even -> odd) and we have 2 odd here
+			dp[i][0] = ( dp[i-1][1] * 2 )%mod; // // to make even sum we need total ways to make odd sum since ( odd + odd -> even) and we have 2 odd here
+		}
+		else if( !x and !y ) // both even
+		{
+			dp[i][1] = ( dp[i-1][1] * 2 )%mod; // to make odd sum we need total ways to make odd sum since ( odd + even -> odd)  and we have 2 even here
+			dp[i][0] = ( dp[i-1][0] * 2 )%mod; // to make even sum we need total ways to make even sum since ( even + even -> even)  and we have 2 even here
+		}
+		else // one odd and one even
+		{
+			dp[i][1] = ( dp[i-1][0] + dp[i-1][1] )%mod; // to have odd sum now we can make it by taking previous ways to make odd sum and now 1 even and vice versa.
+			dp[i][0] = ( dp[i-1][1] + dp[i-1][0] )%mod; // to have even sum now we can make it by taking previous ways to make even sum and now 1 even and vice versa.
+		}
 	}
 
-	cout << dp[n][2] << endl;
-
-
+	cout << dp[n][1]%mod << endl; // print number of ways to make odd sum
 }
 
 int32_t main()

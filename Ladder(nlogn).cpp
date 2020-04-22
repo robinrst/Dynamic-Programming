@@ -65,35 +65,55 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] , dp[N] , BIT[N];
+
+void update( int i , int val)
+{
+	for( ; i < N; i += (i&(-i)) ) BIT[i] = ( BIT[i]%mod + val%mod )%mod;
+}
+
+int query( int i)
+{
+	int sum = 0;
+	for( ; i > 0 ; i -= (i&(-i)) ) sum = ( sum%mod + BIT[i]%mod )%mod;
+	return sum;
+}
+
+int rangeQuery( int l , int r)
+{
+	return ( query(r) - query(l-1) + mod )%mod;
+}
 
 void go()
 {
-	cin >> n;
+	cin >> n >> k;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	fo(i,1,n+1) cin >> a[i];
 
-	fo(i,2,n+1) 
+	update(1,1);
+	int ans = 0;
+
+	fo(i,2,n+1)
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		if( a[i] ) continue;
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+		int l = max( 1LL , i - k );
+		int r = i;
+		int now = rangeQuery( l , r );
+
+		update( i , now );
+
+		if( i == n ) ans = now;
 	}
 
-	cout << dp[n][2] << endl;
-
-
+	cout << ans << endl;
 }
 
 int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 

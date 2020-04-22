@@ -26,7 +26,7 @@ using namespace __gnu_pbds;
 #define          endl '\n'
 #define          sc second
 #define          pb push_back
-#define          N (int)2e5+5
+#define          N (int)2e6+5
 #define          PI acos(-1.0)
 #define          int long long 
 #define          vi vector<int>
@@ -64,37 +64,47 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 
 int n,m,k,q;
 string s;
-vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] ,dp[N]; // dp[i] -> maximum sum of sequence till form upto ith index
 
 void go()
 {
-	cin >> n;
+	cin >> n >> k;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	fo(i,0,n) cin >> a[i] , dp[i] = a[i];
 
-	fo(i,2,n+1) 
+	int ans = 0;
+
+	for( int i = k; i < n; i += k )
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		int mx1 = i - k , mx2 = -inf;
+		for( int j = i - k + 1; j < i; j++)
+		{
+			if( dp[j] > dp[mx1] )
+			{
+				mx2 = mx1;
+				mx1 = j;
+			}
+			else if( mx2 == -inf or dp[j] > dp[mx2] ) mx2 = j;
+		}
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+		for(int j = i; j < i+k and j < n; j++)
+		{
+			if( a[j] < 0 ) dp[j] = dp[mx1];
+			else if( j - mx1 != k ) dp[j] = dp[mx1] + a[j];
+			else dp[j] = dp[mx2] + a[j];
+
+			ans = max( ans , dp[j] );
+		}
 	}
 
-	cout << dp[n][2] << endl;
-
-
+	cout << ans << endl;	
 }
 
 int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 
- 

@@ -26,7 +26,7 @@ using namespace __gnu_pbds;
 #define          endl '\n'
 #define          sc second
 #define          pb push_back
-#define          N (int)2e5+5
+#define          N (int)4e5+5
 #define          PI acos(-1.0)
 #define          int long long 
 #define          vi vector<int>
@@ -63,30 +63,62 @@ const int inf = 0x3f3f3f3f;
 const int INF = 0x3f3f3f3f3f3f3f3f;
 
 int n,m,k,q;
-string s;
-vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int dp[N]; // dp[i] -> maximum height sum in which ith box is on top
+
+struct box
+{
+	int h , w , l;
+
+}a[N];
+
+bool can( int j , int i)
+{
+	return ( a[j].w > a[i].w  and a[j].l > a[i].l ); // check whether ith box can be placed over jth box
+}
 
 void go()
 {
 	cin >> n;
+	int cn = 1;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	a[0].l = a[0].w = inf;
+	a[0].h = 0;
 
-	fo(i,2,n+1) 
+	fo(i,0,n) 
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		int h , w , l;
+		cin >> h >> w >> l;
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+		a[cn] = { h , max(l,w) , min(l,w) };
+		a[cn+1] = { l , max( h ,w) , min( h,w ) };
+		a[cn+2] = { w , max(h ,l) , min( h ,l) };
+
+		cn += 3;
 	}
 
-	cout << dp[n][2] << endl;
+	sort( a + 1 , a + 3*n + 1 , [&] ( box x , box y) -> bool
+	{
+		return ( x.w * x.l > y.w * y.l );
+	});
 
+	int ans = 0;
 
+	memset( dp , 0 , sizeof(int)*(3*n+1) );
+	dp[0] = 0;
+
+	fo(i,1,3*n+1)
+	{
+		for(int j = i-1; ~j; j--)
+		{
+			if( can(j , i) ) // can ith box on top jth box
+			{
+				dp[i] = max( dp[i] , dp[j] + a[i].h ); // if ith box can be placed on top of jth box , then increase height of ith box by adding ith box height to jth box height
+			}
+		}
+		ans = max( ans , dp[i] );
+	}
+
+	cout << ans << endl;
 }
 
 int32_t main()

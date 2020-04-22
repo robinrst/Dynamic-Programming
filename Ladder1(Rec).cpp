@@ -65,35 +65,42 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] , dp[N];
+
+int makeAns( int i = 0 )
+{
+	if( i > n or a[i] ) return 0;
+	if( i == n ) return 1;
+
+	int& ans = dp[i];
+	if( ~ans ) return ans;
+
+	ans = 0;
+	for( int j = 1; j <= k; j++)
+	{
+		ans = ( ans%mod + makeAns( i + j )%mod ) %mod;
+	}
+
+	return ans;
+}
 
 void go()
 {
-	cin >> n;
+	cin >> n >> k;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	fo(i,0,n) cin >> a[i];
 
-	fo(i,2,n+1) 
-	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
-
-		dp[i][2] = dp[i][0] + dp[i][1];
-	}
-
-	cout << dp[n][2] << endl;
-
-
+	memset( dp , -1 , sizeof dp);
+	int ans = makeAns(0)%mod;
+	
+	cout << ans << endl;	
 }
 
 int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 

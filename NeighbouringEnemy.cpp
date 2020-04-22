@@ -65,35 +65,53 @@ const int INF = 0x3f3f3f3f3f3f3f3f;
 int n,m,k,q;
 string s;
 vi adj[N];
-int dp[N][3]; // dp[i][0] -> ith index end at 0
-			// dp[i][1] -> ith index end at 1
-			// dp[i][2] -> number of valid binary strings end at ith index
+int a[N] , dp[N][2]; // dp[i][0] -> maximum sum not taking ith 
+					// dp[i][1] -> maximum sum taking ith
 
 void go()
 {
 	cin >> n;
 
-	dp[1][0] = dp[1][1] = 1;
-	dp[1][2] = 2;
+	fo(i,1,n+1) cin >> a[i];
 
-	fo(i,2,n+1) 
+	sort( a + 1 , a + 1 + n ); // so that next element will always greater or previous + 1
+
+	dp[1][1] = a[1]; // taken 1st
+	dp[1][0] = 0; // not taken
+
+	int pre = a[1];
+
+	fo(i,2,n+1)
 	{
-		dp[i][0] = dp[i-1][0] + dp[i-1][1];
-		dp[i][1] = dp[i-1][0];
+		if( a[i] == pre ) // same as previous
+		{
+			dp[i][1] = dp[i-1][1] + a[i]; // previoud taken + now taken
+			dp[i][0] = dp[i-1][0]; // not taken as of previous
+		}
+		else if( a[i] == pre + 1 )
+		{
+			dp[i][1] = dp[i-1][0] + a[i]; // if taking this one then now sum will be previous not taken + now a[i]
+			dp[i][0] = max( dp[i-1][0] , dp[i-1][1] ); // if not taking this one , update not taking till now as maximum of not taking of previous and taking of previous
+		}
+		else
+		{
+			dp[i][1] = max( dp[i-1][1] + a[i] , dp[i-1][0] + a[i] ); // here element is greater than previous + 1 -> can make answer with both maximum sum of previously taken and not taken
+			dp[i][0] = max( dp[i-1][0] , dp[i-1][1] );//// if not taking this one , update not taking till now as maximum of not taking of previous and taking of previous
+		}
 
-		dp[i][2] = dp[i][0] + dp[i][1];
+		pre = a[i];
 	}
 
-	cout << dp[n][2] << endl;
+	int ans = max( dp[n][0] , dp[n][1] ); // maximum of taking last or not
 
-
+	cout << ans << endl;
 }
 
 int32_t main()
 {
 	FAST;     
 	int t=1; 
-	cin>>t;
+	// cin>>t;
 	test(t) go();
 }
 

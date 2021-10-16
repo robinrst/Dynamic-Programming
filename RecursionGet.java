@@ -20,6 +20,7 @@ public class RecursionGet {
 
 	}
 
+	// Get Subsequence
 	public static ArrayList<String> subseq(String str) {
 
 		if (str.length() == 0) {
@@ -129,6 +130,7 @@ public class RecursionGet {
 			return "";
 	}
 
+	// get Permutation
 	public static ArrayList<String> permutation(String str) {
 
 		if (str.length() == 0) {
